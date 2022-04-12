@@ -1,15 +1,58 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import GoogleLogo from "../../Assets/Image/google.svg";
+import { createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import auth from "../../firebase.init";
+
+const googleProvider = new GoogleAuthProvider();
 
 const Signup = () => {
+
+  const handleGoogleLogin = () => {
+  
+signInWithPopup(auth, googleProvider)
+  .then((result) => {
+  
+    const user = result.user;
+   console.log(user);
+  }).catch((error) => {
+    
+    const errorCode = error.code;
+    const errorMessage = error.message;
+  });
+  }
+
+
+
+  const handleSignUp = event => {
+    event.preventDefault();
+    const email = event.target.email.value;
+    const password = event.target.password.value;
+    console.log(email);
+    console.log(password);
+    
+    createUserWithEmailAndPassword(auth, email, password)
+  .then((userCredential) => {
+    
+    const user = userCredential.user;
+       console.log(user);
+  })
+  .catch((error) => {
+    const errorCode = error.code;
+    const errorMessage = error.message;
+   console.log(errorCode);
+   console.log(errorMessage);
+  });
+  }
+
+
   const navigate = useNavigate();
 
   return (
     <div className='auth-form-container '>
       <div className='auth-form'>
         <h1>Sign Up</h1>
-        <form>
+        <form onSubmit={handleSignUp}>
           <div className='input-field'>
             <label htmlFor='email'>Email</label>
             <div className='input-wrapper'>
@@ -46,7 +89,7 @@ const Signup = () => {
           <div className='line-right' />
         </div>
         <div className='input-wrapper'>
-          <button className='google-auth'>
+          <button className='google-auth' onClick={handleGoogleLogin }>
             <img src={GoogleLogo} alt='' />
             <p> Continue with Google </p>
           </button>
